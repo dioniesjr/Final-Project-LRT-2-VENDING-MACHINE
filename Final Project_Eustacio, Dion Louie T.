@@ -1,0 +1,439 @@
+#include <iostream>
+#include <iomanip>
+#include <limits>
+
+using namespace std;
+
+int selectDirection() {
+    int directionChoice;
+
+    do {
+        cout << "\nSelect Direction:\n1. Eastbound (From Recto to Antipolo)\n2. Westbound (From Antipolo to Recto)\n\nEnter your choice (1-2): ";
+        cin >> directionChoice;
+
+        if (cin.fail() || (directionChoice != 1 && directionChoice != 2)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid direction choice. Please enter 1 for Eastbound or 2 for Westbound.\n\n";
+        }
+        else {
+            break;
+        }
+    } while (true);
+
+    return directionChoice;
+}
+
+
+void selectStations(int direction, int& origin, int& destination) {
+    string directionString = (direction == 1) ? "(Eastbound)" : "(Westbound)";
+    if (direction == 1) {
+        cout << "\nEastbound (From Recto to Antipolo)" << endl;
+    }
+    else if (direction == 2) {
+        cout << "\nWestbound (From Antipolo to Recto)" << endl;
+    }
+    else {
+        cout << "\nInvalid direction choice." << endl;
+        return;
+    }
+
+    cout << "\nList of Stations " << directionString << " :" << endl;
+
+    if (direction == 1) {  // Eastbound stations
+        cout << "1. Recto Station\n2. Legarda Station\n3. Pureza Station\n4. V. Mapa Station\n5. J. Ruiz Station\n"
+            << "6. Gilmore Station\n7. Betty Go-Belmonte Station\n8. Cubao Station\n9. Anonas Station\n10. Katipunan Station\n"
+            << "11. Santolan Station\n12. Marikina Station\n13. Antipolo Station\n";
+    }
+    else if (direction == 2) {  // Westbound stations
+        cout << "1. Antipolo Station\n2. Marikina Station\n3. Santolan Station\n4. Katipunan Station\n5. Anonas Station\n"
+            << "6. Cubao Station\n7. Betty Go-Belmonte Station\n8. Gilmore Station\n9. J. Ruiz Station\n10. V. Mapa Station\n"
+            << "11. Pureza Station\n12. Legarda Station\n13. Recto Station\n";
+    }
+
+    do {
+        cout << "\nEnter your choice for the origin station (1-13): ";
+        cin >> origin;
+
+        if (cin.fail() || origin < 1 || origin > 13) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid station choice. Please enter a number between 1 and 13.\n";
+            continue;
+        }
+
+        cout << "\nEnter your choice for the destination station (1-13): ";
+        cin >> destination;
+
+        if (cin.fail() || destination < 1 || destination > 13 || origin >= destination) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            if (destination < 1 || destination > 13) {
+                cout << "\nInvalid destination choice. Please enter a number between 1 and 13.\n";
+            }
+            else {
+                cout << "\nInvalid station order. Please ensure that the origin is less than the destination for the "
+                    << directionString << " direction and enter valid station numbers.\n";
+            }
+        }
+        else {
+            break;
+        }
+    } while (true);
+}
+
+
+float calculateFare(int origin, int destination) {
+
+    float fares[][13] = {
+        // Origin: Antipolo Station (Station 1)
+        {0.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0},
+
+        // Origin: Marikina Station (Station 2)
+        {15.0, 0.0, 18.0, 22.0, 28.0, 32.0, 38.0, 42.0, 48.0, 52.0, 58.0, 62.0, 68.0},
+
+        // Origin: Santolan Station (Station 3)
+        {20.0, 18.0, 0.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0},
+
+        // Origin: Katipunan Station (Station 4)
+        {25.0, 22.0, 15.0, 0.0, 12.0, 18.0, 24.0, 28.0, 32.0, 38.0, 42.0, 48.0, 52.0},
+
+        // Origin: Anonas Station (Station 5)
+        {30.0, 28.0, 20.0, 12.0, 0.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0},
+
+        // Origin: Cubao Station (Station 6)
+        {35.0, 32.0, 25.0, 18.0, 10.0, 0.0, 12.0, 18.0, 22.0, 28.0, 32.0, 38.0, 42.0},
+
+        // Origin: Betty Go-Belmonte Station (Station 7)
+        {40.0, 38.0, 30.0, 24.0, 15.0, 12.0, 0.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0},
+
+        // Origin: Gilmore Station (Station 8)
+        {45.0, 42.0, 35.0, 28.0, 20.0, 18.0, 10.0, 0.0, 12.0, 18.0, 22.0, 28.0, 32.0},
+
+        // Origin: J. Ruiz Station (Station 9)
+        {50.0, 48.0, 40.0, 32.0, 25.0, 22.0, 15.0, 12.0, 0.0, 10.0, 15.0, 20.0, 25.0},
+
+        // Origin: V. Mapa Station (Station 10)
+        {55.0, 52.0, 45.0, 38.0, 30.0, 28.0, 20.0, 18.0, 10.0, 0.0, 12.0, 18.0, 22.0},
+
+        // Origin: Pureza Station (Station 11)
+        {60.0, 58.0, 50.0, 42.0, 35.0, 32.0, 25.0, 22.0, 15.0, 12.0, 0.0, 10.0, 15.0},
+
+        // Origin: Legarda Station (Station 12)
+        {65.0, 62.0, 55.0, 48.0, 40.0, 38.0, 30.0, 28.0, 20.0, 18.0, 10.0, 0.0, 12.0},
+
+        // Origin: Recto Station (Station 13)
+        {70.0, 68.0, 60.0, 52.0, 45.0, 42.0, 35.0, 32.0, 25.0, 22.0, 15.0, 12.0, 0.0}
+    };
+
+    if (origin >= 1 && origin <= 13 && destination >= 1 && destination <= 13) {
+        return fares[origin - 1][destination - 1];
+    }
+    else {
+        cout << "\nInvalid origin or destination choice." << endl;
+        return -1.0;
+    }
+}
+
+float beepCardTransaction(float beepCardBalance, float fare) {
+    float amount;
+
+    do {
+        cout << "\nEnter the amount to load/reload into your Beep Card (Fare amount: PHP " << fixed << setprecision(2) << fare << "): ";
+        cin >> amount;
+
+        if (cin.fail() || amount < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input. Please enter a valid positive numeric amount.\n";
+        }
+        else {
+            beepCardBalance += amount;
+            cout << "\nBeep Card loaded with PHP " << fixed << setprecision(2) << amount << ". New balance: PHP " << beepCardBalance << endl;
+            break;
+        }
+    } while (true);
+
+    return beepCardBalance;
+}
+
+
+bool processCashPayment(float fare) {
+    float cashInput = 0.0;
+    float totalCashEntered = 0.0;
+
+    do {
+        cout << "\nFare amount: PHP " << fixed << setprecision(2) << fare << endl;
+        cout << "\nEnter the amount of cash: PHP ";
+
+        cin >> cashInput;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid input. Please enter a valid numeric amount.\n";
+        }
+        else if (cashInput > 0) {
+            totalCashEntered += cashInput;
+
+            if (totalCashEntered >= fare) {
+                float change = totalCashEntered - fare;
+                cout << "Cash payment successful. ";
+                if (change > 0) {
+                    cout << "Your change: PHP " << fixed << setprecision(2) << change;
+                }
+                else {
+                    cout << "Thank you!";
+                }
+                cout << endl;
+                return true;
+            }
+            else {
+                cout << "Total cash entered: PHP " << fixed << setprecision(2) << totalCashEntered
+                    << ". Add PHP " << fixed << setprecision(2) << fare - totalCashEntered << " more." << endl;
+            }
+        }
+        else {
+            cout << "Invalid cash amount. Please enter a positive amount." << endl;
+        }
+    } while (true);
+}
+
+
+bool processPayment(float& beepCardBalance, float fare, char& paymentMethod) {
+
+    do {
+        cout << "\nSelect Payment Method (C for Cash, B for Beep Card): ";
+        cin >> paymentMethod;
+
+        if (cin.fail() || (paymentMethod != 'C' && paymentMethod != 'c' && paymentMethod != 'B' && paymentMethod != 'b')) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid payment method choice. Please enter either C for Cash or B for Beep Card.\n";
+        }
+        else {
+            break;
+        }
+    } while (true);
+
+    if (paymentMethod == 'C' || paymentMethod == 'c') {
+        return processCashPayment(fare);
+    }
+    else if (paymentMethod == 'B' || paymentMethod == 'b') {
+        cout << "\nFare amount: PHP " << fixed << setprecision(2) << fare << endl;
+        cout << "Current Beep Card Balance: PHP " << fixed << setprecision(2) << beepCardBalance << endl;
+
+        if (beepCardBalance < fare) {
+            char loadOption;
+            do {
+                cout << "Insufficient balance. Do you want to load your Beep Card? (Y/N): ";
+                cin >> loadOption;
+
+                if (loadOption == 'Y' || loadOption == 'y') {
+                    beepCardBalance = beepCardTransaction(beepCardBalance, fare);
+
+                    if (beepCardBalance < fare) {
+                        cout << "Balance is still insufficient. Please load more into your Beep Card." << endl;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else if (loadOption != 'N' && loadOption != 'n') {
+                    cout << "\nInvalid choice. Please choose only between Y/y or N/n.\n" << endl;
+                }
+                else {
+                    cout << "Transaction canceled. Thank you!" << endl;
+                    return false;
+                }
+            } while (true);
+        }
+
+        char beepCardOption;
+        cout << "Do you want to transact using your Beep Card? (Y/N): ";
+        cin >> beepCardOption;
+
+        if (beepCardOption == 'Y' || beepCardOption == 'y') {
+            beepCardBalance -= fare;
+            cout << "\nFare deducted from Beep Card. Remaining balance: PHP " << beepCardBalance << endl;
+            return true;
+        }
+        else {
+            cout << "Transaction canceled. Thank you!" << endl;
+            return false;
+        }
+    }
+    else {
+        cout << "Invalid payment method choice." << endl;
+        return false;
+    }
+}
+
+
+void confirmTransaction() {
+    cout << "\nTransaction successful! Thank you for using LRT Ticket Vending Machine." << endl;
+
+}
+
+void printReceipt(float fare, int origin, int destination, float beepCardBalance, int direction, char paymentMethod) {
+    string eastboundstationNames[] = {
+        "Recto", "Legarda", "Pureza", "V. Mapa", "J. Ruiz", "Gilmore",
+        "Betty Go-Belmonte", "Cubao", "Anonas", "Katipunan", "Santolan", "Marikina", "Antipolo"
+    };
+
+    string westboundstationNames[] = {
+        "Antipolo", "Marikina", "Santolan", "Katipunan", "Anonas", "Cubao",
+        "Betty Go-Belmonte", "Gilmore", "J. Ruiz", "V. Mapa", "Pureza", "Legarda", "Recto"
+    };
+
+    cout << "\n========== LRT Ticket Receipt ==========\n";
+
+    string originStation, destStation;
+
+    if (direction == 1) { // Eastbound
+        originStation = eastboundstationNames[origin - 1];
+        destStation = eastboundstationNames[destination - 1];
+    }
+    else { // Westbound
+        originStation = westboundstationNames[origin - 1];
+        destStation = westboundstationNames[destination - 1];
+    }
+
+    cout << "Origin: " << originStation << " Station\n";
+    cout << "Destination: " << destStation << " Station\n";
+    cout << "Fare: PHP " << fixed << setprecision(2) << fare << "\n";
+
+    cout << "\nTransaction Details:\n";
+
+    cout << "Payment Method: ";
+    if (paymentMethod == 'C' || paymentMethod == 'c') {
+        cout << "Cash\n";
+    }
+    else if (paymentMethod == 'B' || paymentMethod == 'b') {
+        cout << "Beep Card\n";
+    }
+
+    if (fare <= 0.0) {
+        cout << "Beep Card Balance: PHP " << fixed << setprecision(2) << beepCardBalance << "\n";
+    }
+
+    cout << "\nThank you for using LRT Ticket Vending Machine!\n";
+    cout << "=========================================\n";
+}
+
+
+
+bool askForReceipt() {
+    char receiptOption;
+
+    do {
+        cout << "\nDo you want a receipt? (Y/N): ";
+        cin >> receiptOption;
+
+        if (cin.fail() || (receiptOption != 'Y' && receiptOption != 'y' && receiptOption != 'N' && receiptOption != 'n')) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid choice. Please enter either Y for Yes or N for No.\n";
+        }
+        else {
+            break;
+        }
+    } while (true);
+
+    return (receiptOption == 'Y' || receiptOption == 'y');
+}
+
+bool askForAnotherTransaction() {
+    char anotherTransactionOption;
+
+    do {
+        cout << "\nDo you want to make another transaction? (Y/N): ";
+        cin >> anotherTransactionOption;
+
+        if (cin.fail() || (anotherTransactionOption != 'Y' && anotherTransactionOption != 'y' && anotherTransactionOption != 'N' && anotherTransactionOption != 'n')) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "\nInvalid choice. Please enter either Y for Yes or N for No.\n";
+        }
+        else {
+            break;
+        }
+    } while (true);
+
+    return (anotherTransactionOption == 'Y' || anotherTransactionOption == 'y');
+}
+
+
+int main() {
+
+    cout << "================= LRT 2 VENDING MACHINE =================\n\n";
+
+    int direction;
+    int origin, destination;
+    float beepCardBalance = 0.0;
+    char paymentMethod;
+    string eastboundstationNames[] = {
+        "Recto", "Legarda", "Pureza", "V. Mapa", "J. Ruiz", "Gilmore",
+        "Betty Go-Belmonte", "Cubao", "Anonas", "Katipunan", "Santolan", "Marikina", "Antipolo"
+    };
+
+    string westboundstationNames[] = {
+        "Antipolo", "Marikina", "Santolan", "Katipunan", "Anonas", "Cubao",
+        "Betty Go-Belmonte", "Gilmore", "J. Ruiz", "V. Mapa", "Pureza", "Legarda", "Recto"
+    };
+
+    do {
+        direction = selectDirection();
+
+        selectStations(direction, origin, destination);
+
+        cout << "\nYou selected:\n" << ((direction == 1) ? "Eastbound" : "Westbound") << " (" << ((direction == 1) ? "From Recto to Antipolo" : "From Antipolo to Recto") << ")\n";
+        cout << "Origin: " << eastboundstationNames[origin - 1] << " Station\n";
+        cout << "Destination: " << eastboundstationNames[destination - 1] << " Station\n";
+
+        char confirmOption;
+        do {
+            cout << "\nAre you sure you want to proceed with these stations? (Y/N): ";
+            cin >> confirmOption;
+
+            if (cin.fail() || (confirmOption != 'Y' && confirmOption != 'y' && confirmOption != 'N' && confirmOption != 'n')) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "\nInvalid choice. Please enter either Y for Yes or N for No.\n";
+            }
+            else {
+                break;
+            }
+        } while (true);
+
+        if (confirmOption == 'N' || confirmOption == 'n') {
+            continue;
+        }
+
+        float fare = calculateFare(origin, destination);
+
+        bool paymentSuccess = processPayment(beepCardBalance, fare, paymentMethod);
+
+        if (paymentSuccess) {
+            confirmTransaction();
+
+            if (askForReceipt()) {
+                printReceipt(fare, origin, destination, beepCardBalance, direction, paymentMethod);
+            }
+        }
+
+        bool anotherTransaction = askForAnotherTransaction();
+
+        if (!anotherTransaction) {
+            break;
+        }
+
+        beepCardBalance = 0.0;
+        paymentMethod = '\0';
+
+    } while (true);
+
+    cout << "\nThank you for using LRT Ticket Vending Machine. Have a great day!\n";
+
+    return 0;
+}
